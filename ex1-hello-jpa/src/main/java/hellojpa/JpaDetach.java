@@ -5,7 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class JpaFlush {
+public class JpaDetach {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
@@ -16,12 +16,13 @@ public class JpaFlush {
         tx.begin();
 
         try {
-            Member member = new Member(200L, "flushA");
-            em.persist(member);
+            // 영속
+            Member findMember = em.find(Member.class, 150L);
+            findMember.setName("ASDS");
 
-            em.flush();
+//            em.clear(); // 전체를 준영속 상태로
 
-            System.out.println("=============");
+            em.detach(findMember); // 준영속
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
