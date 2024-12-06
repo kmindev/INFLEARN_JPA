@@ -5,7 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class JpaMain {
+public class JpaCrud {
     public static void main(String[] args) {
         // resources/META-INF/persistence.xml에 unit name
         // 애플리케이션 당 하나만 생성
