@@ -9,6 +9,14 @@ public class Member {
     private Long id;
     private String name;
 
+    public Member() { // jpa는 기본 생성자가 필요함(접근제한자는 아무거나)
+    }
+
+    public Member(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
