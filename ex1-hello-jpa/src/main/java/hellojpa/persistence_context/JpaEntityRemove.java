@@ -1,11 +1,11 @@
-package hellojpa;
+package hellojpa.persistence_context;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class JpaDetach {
+public class JpaEntityRemove {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
@@ -16,13 +16,9 @@ public class JpaDetach {
         tx.begin();
 
         try {
-            // 영속
             Member findMember = em.find(Member.class, 150L);
-            findMember.setName("ASDS");
+            em.remove(findMember);
 
-//            em.clear(); // 전체를 준영속 상태로
-
-            em.detach(findMember); // 준영속
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

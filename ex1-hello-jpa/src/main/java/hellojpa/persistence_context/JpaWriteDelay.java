@@ -1,11 +1,11 @@
-package hellojpa;
+package hellojpa.persistence_context;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-public class JpaDirtyCheck {
+public class JpaWriteDelay {
 
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
@@ -16,9 +16,14 @@ public class JpaDirtyCheck {
         tx.begin();
 
         try {
-            Member findMember = em.find(Member.class, 150L);
-            findMember.setName("ZZZZ");
+            // 쓰기 지연 테스트
+            Member member1 = new Member(150L, "A");
+            Member member2 = new Member(160L, "B");
 
+            em.persist(member1);
+            em.persist(member2);
+
+            System.out.println("=================");
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
