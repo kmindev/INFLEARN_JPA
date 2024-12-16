@@ -16,6 +16,10 @@ public class Member {
     @JoinColumn(name = "team_id", insertable = false, updatable = false) // 읽기 전용
     private Team team;
 
+    @OneToOne
+    @JoinColumn(name = "locker_id", unique = true)
+    private Locker locker;
+
     public Long getId() {
         return id;
     }
