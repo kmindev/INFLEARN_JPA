@@ -13,7 +13,8 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "team") // 연관관계 주인 설정: Member 엔티티의 Team 필드명
+    @OneToMany
+    @JoinColumn(name = "team_id") // 일대다 단방향 매핑
     private List<Member> members = new ArrayList<>();
 
     public Long getId() {
