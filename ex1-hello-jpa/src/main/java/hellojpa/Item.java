@@ -3,7 +3,7 @@ package hellojpa;
 import javax.persistence.*;
 
 @DiscriminatorColumn // DTYPE(자식 타입을 구분하는 컬럼 생성)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // DB 슈퍼타입, 서브타입 관계
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) // DB 슈퍼타입, 서브타입 관계
 @Entity
 public class Item {
 
