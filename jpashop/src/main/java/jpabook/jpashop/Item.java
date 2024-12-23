@@ -4,9 +4,10 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@DiscriminatorColumn
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Entity
-public class Item {
+public abstract class Item {
 
     @Id
     @GeneratedValue
