@@ -96,8 +96,12 @@ public class JpaMain {
             parent.addChild(child2);
 
             em.persist(parent);
-//            em.persist(child1);
-//            em.persist(child2);
+
+            em.flush();
+            em.clear();
+
+            Parent findParent = em.find(Parent.class, parent.getId());
+            em.remove(findParent); // casecade remove 옵션, orphanRemoval 활성화시 자식도 함께 삭제
 
             tx.commit();
         } catch (Exception e) {
