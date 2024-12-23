@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class JpaMain {
 
@@ -18,12 +19,22 @@ public class JpaMain {
 
         try {
 
+            Team teamA = new Team();
+            teamA.setName("team1");
+            em.persist(teamA);
+
+            Team teamB = new Team();
+            teamB.setName("team2");
+            em.persist(teamB);
+
             Member member1 = new Member();
             member1.setUsername("member1");
+            member1.setTeam(teamA);
             em.persist(member1);
 
             Member member2 = new Member();
             member2.setUsername("member2");
+            member2.setTeam(teamB);
             em.persist(member2);
 
             em.flush();
@@ -60,14 +71,22 @@ public class JpaMain {
 
 
             // ===== 프록시 관련 메서드 ======
-            Member refMember = em.getReference(Member.class, member1.getId());
-            System.out.println("refMember.getUsername() = " + refMember.getUsername());
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // 프록시 인스턴스 초기화 여부
+//            Member refMember = em.getReference(Member.class, member1.getId());
+//            System.out.println("refMember.getUsername() = " + refMember.getUsername());
+//            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // 프록시 인스턴스 초기화 여부
+//
+//            System.out.println("refMember = " + refMember.getClass()); // 프록시 클래스 확인 방법
+//
+//            Hibernate.initialize(refMember); // 강제 초기화
 
-            System.out.println("refMember = " + refMember.getClass()); // 프록시 클래스 확인 방법
+            // ===== 연관관계 지연로딩 =====
+//            Member m = em.find(Member.class, member1.getId());
+//            System.out.println("m = " + m.getTeam().getClass());
+//            System.out.println("m.getTeam().getName() = " + m.getTeam().getName()); // 이 시점에 Team 조회
 
-            Hibernate.initialize(refMember); // 강제 초기화
-            
+            List<Member> members = em.createQuery("select m from Member m", Member.class) // 즉시로딩에서 JPQL 사용시 N+1 문제 발생(Team 만큼 추가 쿼리) fetch join이나 엔티티 그래프로 기능으로 n+1 문제 해결 가능
+                    .getResultList();
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
