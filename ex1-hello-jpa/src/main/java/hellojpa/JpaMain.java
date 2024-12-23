@@ -19,26 +19,26 @@ public class JpaMain {
 
         try {
 
-            Team teamA = new Team();
-            teamA.setName("team1");
-            em.persist(teamA);
-
-            Team teamB = new Team();
-            teamB.setName("team2");
-            em.persist(teamB);
-
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setTeam(teamA);
-            em.persist(member1);
-
-            Member member2 = new Member();
-            member2.setUsername("member2");
-            member2.setTeam(teamB);
-            em.persist(member2);
-
-            em.flush();
-            em.clear();
+//            Team teamA = new Team();
+//            teamA.setName("team1");
+//            em.persist(teamA);
+//
+//            Team teamB = new Team();
+//            teamB.setName("team2");
+//            em.persist(teamB);
+//
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//            member1.setTeam(teamA);
+//            em.persist(member1);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//            member2.setTeam(teamB);
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
 
             // ===== getReference 지연로딩을 사용한다.(프록시 객체 반환)  ======
 //            Member findMember = em.find(Member.class, 1L); // 실제 엔티티 조회(즉시 조회)
@@ -84,8 +84,20 @@ public class JpaMain {
 //            System.out.println("m = " + m.getTeam().getClass());
 //            System.out.println("m.getTeam().getName() = " + m.getTeam().getName()); // 이 시점에 Team 조회
 
-            List<Member> members = em.createQuery("select m from Member m", Member.class) // 즉시로딩에서 JPQL 사용시 N+1 문제 발생(Team 만큼 추가 쿼리) fetch join이나 엔티티 그래프로 기능으로 n+1 문제 해결 가능
-                    .getResultList();
+//            List<Member> members = em.createQuery("select m from Member m", Member.class) // 즉시로딩에서 JPQL 사용시 N+1 문제 발생(Team 만큼 추가 쿼리) fetch join이나 엔티티 그래프로 기능으로 n+1 문제 해결 가능
+//                    .getResultList();
+
+            // ===== CASE CADE ===
+            Child child1 = new Child();
+            Child child2 = new Child();
+
+            Parent parent = new Parent();
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+            em.persist(parent);
+//            em.persist(child1);
+//            em.persist(child2);
 
             tx.commit();
         } catch (Exception e) {
