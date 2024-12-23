@@ -1,10 +1,11 @@
 package hellojpa;
 
+import org.hibernate.Hibernate;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.time.LocalDateTime;
 
 public class JpaMain {
 
@@ -17,18 +18,60 @@ public class JpaMain {
 
         try {
 
-            Member member = new Member();
-            member.setUsername("user1");
-            member.setCreateBy("user1");
-            member.setCreatedAt(LocalDateTime.now());
-            member.setModifiedBy("user1");
-            member.setModifiedAt(LocalDateTime.now());
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            em.persist(member1);
 
-            em.persist(member);
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            em.persist(member2);
 
+            em.flush();
+            em.clear();
+
+            // ===== getReference 지연로딩을 사용한다.(프록시 객체 반환)  ======
+//            Member findMember = em.find(Member.class, 1L); // 실제 엔티티 조회(즉시 조회)
+//            Member findMember = em.getReference(Member.class, member1.getId()); // 프록시 엔티티 객체 조회
+//            System.out.println("findMember = " + findMember.getClass());
+//            System.out.println("findMember.id = " + findMember.getId());
+//            System.out.println("findMember.username = " + findMember.getUsername()); // 이 시점에 쿼리를 날림.
+
+            // ===== 프록시 객체는 엔티티 클래스를 상속한다. 그러므로 타입 비교시 instanceof로 비교해야함. ======
+//            Member m1 = em.find(Member.class, member1.getId());
+//            Member m2 = em.getReference(Member.class, member2.getId());
+//
+//            System.out.println("m1 == m2: " + (m1 == m2)); // 프록시 객체 엔티티 타입 체크시 == 말고 instanceof 를 사용해야함.
+//            System.out.println("m1 == m2: " + (m2 instanceof Member));
+
+            // ===== 영속 상태의 엔티티는 getReference 조회하면 프록시가 아닌 실제 엔티티 객체를 조회한다. ======
+//            Member findMember = em.find(Member.class, member1.getId());
+//            System.out.println("findMember = " + findMember.getClass()); // class hellojpa.Member
+//
+//            Member reference = em.getReference(Member.class, member1.getId());
+//            System.out.println("reference = " + reference.getClass()); // class hellojpa.Member
+
+            // ===== 준영속 상태를 초기화하면 LazyInitializationException 발생 =====
+//            Member refMember = em.getReference(Member.class, member1.getId());
+//            System.out.println("refMember = " + refMember.getClass());
+//
+//            em.detach(refMember);
+//
+//            System.out.println("refMember = " + refMember.getUsername()); // LazyInitializationException
+
+
+            // ===== 프록시 관련 메서드 ======
+            Member refMember = em.getReference(Member.class, member1.getId());
+            System.out.println("refMember.getUsername() = " + refMember.getUsername());
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // 프록시 인스턴스 초기화 여부
+
+            System.out.println("refMember = " + refMember.getClass()); // 프록시 클래스 확인 방법
+
+            Hibernate.initialize(refMember); // 강제 초기화
+            
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
