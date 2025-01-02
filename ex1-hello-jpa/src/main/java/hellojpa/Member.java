@@ -2,6 +2,7 @@ package hellojpa;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class Member {
@@ -65,5 +66,18 @@ public class Member {
 
     public void setHomeAddress(Address homeAddress) {
         this.homeAddress = homeAddress;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Member member = (Member) object;
+        return Objects.equals(id, member.id) && Objects.equals(username, member.username) && Objects.equals(workPeriod, member.workPeriod) && Objects.equals(homeAddress, member.homeAddress) && Objects.equals(workAddress, member.workAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, workPeriod, homeAddress, workAddress);
     }
 }
