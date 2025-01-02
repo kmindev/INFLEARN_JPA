@@ -2,7 +2,7 @@ package hellojpa;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Member {
@@ -14,27 +14,19 @@ public class Member {
     @Column(name = "username")
     private String username;
 
-    // period
-    @Embedded
-    private Period workPeriod;
-
     // 집 주소
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "city", column = @Column(name = "home_city")),
-            @AttributeOverride(name = "street", column = @Column(name = "home_street")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "home_zipcode"))
-    })
     private Address homeAddress;
 
-    // 회사 주소
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "city", column = @Column(name = "work_city")),
-            @AttributeOverride(name = "street", column = @Column(name = "work_street")),
-            @AttributeOverride(name = "zipcode", column = @Column(name = "work_zipcode"))
-    })
-    private Address workAddress;
+    @ElementCollection
+    @CollectionTable(name = "favorite_food", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "food_name")
+    private Set<String> favoriteFoods = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "address", joinColumns = @JoinColumn(name = "member_id"))
+    private List<Address> addressHisotry = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -52,14 +44,6 @@ public class Member {
         this.username = username;
     }
 
-    public Period getWorkPeriod() {
-        return workPeriod;
-    }
-
-    public void setWorkPeriod(Period workPeriod) {
-        this.workPeriod = workPeriod;
-    }
-
     public Address getHomeAddress() {
         return homeAddress;
     }
@@ -68,16 +52,19 @@ public class Member {
         this.homeAddress = homeAddress;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Member member = (Member) object;
-        return Objects.equals(id, member.id) && Objects.equals(username, member.username) && Objects.equals(workPeriod, member.workPeriod) && Objects.equals(homeAddress, member.homeAddress) && Objects.equals(workAddress, member.workAddress);
+    public Set<String> getFavoriteFoods() {
+        return favoriteFoods;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, workPeriod, homeAddress, workAddress);
+    public void setFavoriteFoods(Set<String> favoriteFoods) {
+        this.favoriteFoods = favoriteFoods;
+    }
+
+    public List<Address> getAddressHisotry() {
+        return addressHisotry;
+    }
+
+    public void setAddressHisotry(List<Address> addressHisotry) {
+        this.addressHisotry = addressHisotry;
     }
 }
