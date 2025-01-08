@@ -76,6 +76,17 @@ public class JpaMain {
                     .getResultList();
             em.clear();
 
+            // 서브 쿼리
+            em.createQuery("select m from Member m where m.age > (select avg(m2.age) from Member m2)", Member.class).getResultList(); // 나이가 평균보다 많은 회원
+            em.clear();
+            em.createQuery("select m from Member m where (select count(o) from Orders o where m = o.member) > 0", Member.class).getResultList(); // 한 건이라도 주문한 고객
+            em.clear();
+            em.createQuery("select m from Member m where exists (select t from Team t where t.name = '팀A')", Member.class).getResultList(); // 팀A 소속인 회원(EXISTS)
+            em.clear();
+            em.createQuery("select o from Orders o where o.orderAmount > ALL (select p.stockAmount from Product p)", Orders.class).getResultList(); // 전체 상품 각각의 재고보다 주문량이 많은 주문들(ALL)
+            em.clear();
+            em.createQuery("select m from Member m where m.team = ANY (select t from Team t)", Member.class).getResultList(); // 어떤 팀이든 팀에 소속된 회원(ANY)
+            em.clear();
 
             tx.commit();
         } catch (Exception e) {
