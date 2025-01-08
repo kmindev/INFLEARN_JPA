@@ -21,6 +21,8 @@ public class JpaMain {
             member.setUsername("member1");
             member.setAge(10);
             member.changeTeam(team);
+            member.changeTeam(team);
+            member.setMemberType(MemberType.ADMIN);
             em.persist(member);
 
             em.flush();
@@ -87,6 +89,14 @@ public class JpaMain {
             em.clear();
             em.createQuery("select m from Member m where m.team = ANY (select t from Team t)", Member.class).getResultList(); // 어떤 팀이든 팀에 소속된 회원(ANY)
             em.clear();
+
+            // JPQL 타입 표현
+            List<Object[]> resultList7 = em.createQuery("select m.username, 'HELLO', TRUE from Member m where m.memberType = jpql.MemberType.ADMIN").getResultList();
+            for (Object[] objects : resultList7) {
+                System.out.println("objects = " + objects[0]);
+                System.out.println("objects = " + objects[1]);
+                System.out.println("objects = " + objects[2]);
+            }
 
             tx.commit();
         } catch (Exception e) {
