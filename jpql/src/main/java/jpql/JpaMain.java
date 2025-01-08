@@ -97,6 +97,30 @@ public class JpaMain {
                 System.out.println("objects = " + objects[1]);
                 System.out.println("objects = " + objects[2]);
             }
+            em.clear();
+
+            // 조건식 CASE
+            List<String> caseResult1 = em.createQuery("select " +
+                    "case when m.age <= 10 then '학생요금' " +
+                    "     when m.age >= 60 then '경로요금' " +
+                    "     else '일반요금' " +
+                    "end " +
+                    "from Member m", String.class
+            ).getResultList();
+            System.out.println("caseResult1 = " + caseResult1);
+            em.clear();
+
+            // 조건식 - coalesce
+            List<String> coalesceResult1 = em.createQuery("select coalesce(m.username, '이름 없는 회원') from Member m", String.class)
+                    .getResultList();
+            System.out.println("coalesceResult1 = " + coalesceResult1);
+            em.clear();
+
+            // 조건식 - nullif
+            List<String> nullifResult1 = em.createQuery("select nullif(m.username, '관리자') from Member m", String.class)
+                    .getResultList();
+            System.out.println("coalesceResult1 = " + coalesceResult1);
+            em.clear();
 
             tx.commit();
         } catch (Exception e) {
