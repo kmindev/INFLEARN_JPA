@@ -38,6 +38,14 @@ public class JpaMain {
             em.createQuery("select o.address from Orders o", Address.class).getResultList(); // 임베디드 타입 프로젝션
             em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList(); // 스칼라 타입 프로젝션
 
+            // 페이징
+            List<Member> resultList1 = em.createQuery("select m from Member m order by m.age desc", Member.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+
+            System.out.println("resultList1.size() = " + resultList1.size());
+
 
             tx.commit();
         } catch (Exception e) {
