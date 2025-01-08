@@ -17,13 +17,24 @@ public class JpaMain {
             team.setName("teamA");
             em.persist(team);
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            member.changeTeam(team);
-            member.changeTeam(team);
-            member.setMemberType(MemberType.ADMIN);
-            em.persist(member);
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setAge(10);
+            member1.changeTeam(team);
+            member1.changeTeam(team);
+            member1.setMemberType(MemberType.ADMIN);
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            member2.setAge(20);
+            member2.changeTeam(team);
+            member2.changeTeam(team);
+            member2.setMemberType(MemberType.USER);
+            em.persist(member2);
+
+
+
 
             em.flush();
             em.clear();
@@ -31,7 +42,7 @@ public class JpaMain {
             // TypeQuery
             TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
             List<Member> resultList = query1.getResultList(); // 결과가 여러개
-            Member singleResult = query1.getSingleResult(); // 결과가 하나
+//            Member singleResult = query1.getSingleResult(); // 결과가 하나
             em.clear();
 
             // 파라미터 바인딩
@@ -121,6 +132,14 @@ public class JpaMain {
                     .getResultList();
             System.out.println("coalesceResult1 = " + coalesceResult1);
             em.clear();
+
+            // 함수 - 기본 제공(concat, substring, trim, lower, upper, length, locate, abs, sqrt, mod, size, index
+            List<String> resultList8 = em.createQuery("select concat('a', 'b') from Member m", String.class).getResultList();
+            System.out.println("resultList8 = " + resultList8);
+
+            // 함수 - 사용자 정의
+            List<String> resultList9 = em.createQuery("select function('group_concat', m.username) from Member m", String.class).getResultList();
+            System.out.println("resultList9 = " + resultList9);
 
             tx.commit();
         } catch (Exception e) {
