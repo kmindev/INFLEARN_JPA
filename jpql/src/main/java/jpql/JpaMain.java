@@ -25,6 +25,12 @@ public class JpaMain {
             TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
             List<Member> resultList = query1.getResultList(); // 결과가 여러개
             Member singleResult = query1.getSingleResult(); // 결과가 하나
+
+            // 파라미터 바인딩
+            TypedQuery<Member> query2 = em.createQuery("select m from Member m where username = :username", Member.class);
+            query2.setParameter("username", "member1");
+            Member singleResult1 = query2.getSingleResult();
+            System.out.println("singleResult1.getUsername() = " + singleResult1.getUsername());
             
 
 
