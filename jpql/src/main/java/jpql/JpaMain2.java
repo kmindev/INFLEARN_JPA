@@ -4,7 +4,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.Collection;
 import java.util.List;
 
 public class JpaMain2 {
@@ -70,6 +69,25 @@ public class JpaMain2 {
             for (Team team : result2) {
                 System.out.println("team = " + team.getName() + " Members : " + team.getMembers().size());
             }
+
+            em.flush();
+            em.clear();
+
+            // Named 쿼리
+            List<Member> result3 = em.createNamedQuery("Member.findByUsername", Member.class)
+                    .setParameter("username", "회원1")
+                    .getResultList();
+
+            System.out.println("result3 = " + result3);
+            em.clear();
+            em.flush();
+
+            // 벌크 연산 => 영속성 컨텍스트의 영향을 받지 않음. (실행 전 자동 flush 됨.)
+            int result4 = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            System.out.println("result4 = " + result4);
+
+
 
 
             tx.commit();
