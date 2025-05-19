@@ -1,19 +1,31 @@
 package jpabook.jpashop.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member {
 
     @Id
     @GeneratedValue
+    @Column(name = "member_id")
     private Long id;
-    private String username;
+
+    private String name;
+
+    @Embedded
+    private Address address;
+
+    @OneToMany(mappedBy = "member") // 연관관계 주인 설정(Order.member로 주인 설정)
+    private List<Order> orders = new ArrayList<>();
 
 }

@@ -10,7 +10,7 @@ public class Child {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fe)
     @JoinColumn(name = "parent_id")
     private Parent parent;
 
