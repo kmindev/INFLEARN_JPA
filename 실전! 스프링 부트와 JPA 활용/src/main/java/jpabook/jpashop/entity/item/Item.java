@@ -2,6 +2,7 @@ package jpabook.jpashop.entity.item;
 
 import jakarta.persistence.*;
 import jpabook.jpashop.entity.Category;
+import jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,22 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<>();
 
+    /**
+     * stock 증가
+     */
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    /**
+     * stock 감소
+     */
+    public void removeStock(int quantity) {
+        int realStock = this.stockQuantity = quantity;
+        if (realStock < 0) {
+            throw new NotEnoughStockException("need more stock");
+        }
+        this.stockQuantity -= realStock;
+    }
 
 }
