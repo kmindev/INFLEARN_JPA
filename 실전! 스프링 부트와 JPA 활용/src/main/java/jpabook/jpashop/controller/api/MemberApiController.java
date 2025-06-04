@@ -23,6 +23,15 @@ public class MemberApiController {
         return memberService.findMembers();
     }
 
+    @GetMapping("/api/v2/members")
+    public Result<List<MemberDto>> membersV2() {
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .toList();
+        return new Result<>(collect.size(), collect);
+    }
+
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
         Long id = memberService.join(member);
@@ -68,6 +77,19 @@ public class MemberApiController {
     public static class UpdateMemberResponse {
         private Long id;
         private String name;
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class MemberDto {
+        private String name;
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class Result<T> {
+        private int count;
+        private T data;
     }
 
 }
