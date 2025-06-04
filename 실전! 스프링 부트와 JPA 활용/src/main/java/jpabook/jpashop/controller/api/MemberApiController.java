@@ -1,6 +1,7 @@
 package jpabook.jpashop.controller.api;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jpabook.jpashop.entity.Member;
 import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
@@ -23,9 +24,22 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    @PostMapping("/api/v2/members")
+    public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberRequest request) {
+        Member member = new Member();
+        member.setName(request.getName());
+        Long id = memberService.join(member);
+        return new CreateMemberResponse(id);
+    }
+
+    @Data
+    public static class CreateMemberRequest {
+        @NotEmpty private String name;
+    }
+
     @Data
     @AllArgsConstructor
-    private class CreateMemberResponse {
+    public static class CreateMemberResponse {
         private Long id;
     }
 
