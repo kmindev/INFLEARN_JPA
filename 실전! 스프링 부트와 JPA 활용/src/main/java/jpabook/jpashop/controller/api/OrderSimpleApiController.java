@@ -1,12 +1,16 @@
 package jpabook.jpashop.controller.api;
 
+import jpabook.jpashop.entity.Address;
 import jpabook.jpashop.entity.Order;
+import jpabook.jpashop.entity.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,8 +31,8 @@ public class OrderSimpleApiController {
      * 문제점
      * - JSON 직렬화 과정에서 연관관계로 인해 순환 참조 문제 발생 => JsonIgnore로 json 직렬화에 제외시키면 해결
      * - LAZY 로딩으로 인해 프록시 객체(bytebuddy)를 사용하는데, 이를 JSON 직렬화할 때 에러 발생
-     *   - Hibernate6Module 사용하면 해결 가능
-     *   - 강제로 로딩 시켜서 처리
+     * - Hibernate6Module 사용하면 해결 가능
+     * - 강제로 로딩 시켜서 처리
      */
     @GetMapping("/api/v1/simple-orders")
     public List<Order> orderV1() {
@@ -37,6 +41,35 @@ public class OrderSimpleApiController {
             String name = order.getMember().getName(); // 강제로 로딩
         }
         return orders;
+    }
+
+    /**
+     * V2. DTO 반환
+     * 문제점
+     * - N + 1 문제 발생
+     */
+    @GetMapping("/api/v2/simple-orders")
+    public List<SimpleOrderDto> orderV2() {
+        return orderRepository.findAllByString(new OrderSearch()).stream()
+                .map(SimpleOrderDto::new)
+                .toList();
+    }
+
+    @Data
+    static class SimpleOrderDto {
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+
+        public SimpleOrderDto(Order order) {
+            orderId = order.getId();
+            name = order.getMember().getName(); // LAZY 초기화
+            orderDate = order.getOrderDate();
+            orderStatus = order.getStatus();
+            address = order.getDelivery().getAddress(); // LAZY 초기화
+        }
     }
 
 }
