@@ -55,6 +55,18 @@ public class OrderSimpleApiController {
                 .toList();
     }
 
+    /**
+     * V3. DTO 반환 - 패치조인
+     * 문제점
+     * - N + 1 문제 발생
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> orderV3() {
+        return orderRepository.findAllWithMemberDelivery(new OrderSearch()).stream()
+                .map(SimpleOrderDto::new)
+                .toList();
+    }
+
     @Data
     static class SimpleOrderDto {
         private Long orderId;
