@@ -99,4 +99,19 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    public List<Order> findAllWithItem() {
+        // hibernate6 부터 join fetch를 사용하여 컬렉션 조회시 중복을 자동으로 제거 한다.
+        // join fetch는 페이징 처리 시 메모리에 모두 올려놓고 페이징 처리함.
+        // 1대다 관계에서 페이징 처리 시  join fecth는 사용하지 않는다.
+        return em.createQuery(
+                        "select o from Order o" +
+                                " join fetch o.member m" +
+                                " join fetch o.delivery d" +
+                                " join fetch o.orderItems oi" +
+                                " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
+
 }
