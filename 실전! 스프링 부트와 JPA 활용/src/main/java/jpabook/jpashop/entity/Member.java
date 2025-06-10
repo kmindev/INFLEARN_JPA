@@ -23,6 +23,7 @@ public class Member {
     @Embedded
     private Address address;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member") // 연관관계 주인 설정(Order.member로 주인 설정)
     private List<Order> orders = new ArrayList<>();
 

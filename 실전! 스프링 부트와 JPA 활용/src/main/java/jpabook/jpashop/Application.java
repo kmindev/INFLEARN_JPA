@@ -12,11 +12,11 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-//    @Bean
-//    public Hibernate6Module hibernate6Module() {
-//        Hibernate6Module hibernate6Module = new Hibernate6Module();
-////        hibernate6Module.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, true);
-//        return hibernate6Module;
-//    }
+    @Bean
+    public Hibernate6Module hibernate6Module() {
+        Hibernate6Module hibernate6Module = new Hibernate6Module();
+//        hibernate6Module.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, true);
+        return hibernate6Module;
+    }
 
 }
