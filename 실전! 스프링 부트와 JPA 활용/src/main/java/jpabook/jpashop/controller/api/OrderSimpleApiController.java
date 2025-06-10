@@ -5,6 +5,8 @@ import jpabook.jpashop.entity.Order;
 import jpabook.jpashop.entity.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import java.util.List;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     /**
      * V1. 엔티티 직접 노출
@@ -57,14 +60,23 @@ public class OrderSimpleApiController {
 
     /**
      * V3. DTO 반환 - 패치조인
-     * 문제점
-     * - N + 1 문제 발생
+     * - 필요없는 필드까지 조회하지만 => 재사용성이 높다.
      */
     @GetMapping("/api/v3/simple-orders")
     public List<SimpleOrderDto> orderV3() {
         return orderRepository.findAllWithMemberDelivery(new OrderSearch()).stream()
                 .map(SimpleOrderDto::new)
                 .toList();
+    }
+
+    /**
+     * V4. DTO 반환 - Projection
+     * 문제점
+     * - 필요한 필드만 조회하기 때문에 성능은 좋지만, 재사용이 힘들다.
+     */
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> orderV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 
     @Data
